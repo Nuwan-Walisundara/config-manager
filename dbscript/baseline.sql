@@ -93,6 +93,41 @@ CREATE TABLE `cmxattribute` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
+DROP TABLE IF EXISTS `cmxattributedistribution`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cmxattributedistribution` (
+  `attributedistributiondid` int(11) NOT NULL AUTO_INCREMENT,
+  `companydid` int(11) NOT NULL,
+   `groupdid` int(11) NOT NULL,
+   `attributedid` int(11) NOT NULL ,
+  
+  `isvalid` BIT(1) NOT NULL,
+  `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT 'pkcmxattributedistribution' PRIMARY KEY (`attributedid`), 
+  CONSTRAINT `fk01cmxattributedistribution` FOREIGN KEY (`companydid`) REFERENCES `cmxcompany` (`companydid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk02cmxattributedistribution` FOREIGN KEY (`groupdid`) REFERENCES `cmxgroup` (`groupdid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk03cmxattributedistribution` FOREIGN KEY (`attributedid`) REFERENCES `cmxattribute` (`attributedid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+DROP TABLE IF EXISTS `cmxattributevalue`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cmxattributevalue` (
+  `attributevaluedid` int(11) NOT NULL AUTO_INCREMENT,
+  `attributedistributiondid` int(11) NOT NULL  ,
+  'attribVal' varchar(200) NOT NULL,
+  `isvalid` BIT(1) NOT NULL,
+  `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT 'pkcmxattributevalue' PRIMARY KEY (`attributedid`), 
+  CONSTRAINT `fk01cmxattributevalue` FOREIGN KEY (`attributedistributiondid`) REFERENCES `cmxattributedistribution` (`attributedistributiondid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

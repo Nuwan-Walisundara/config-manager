@@ -9,6 +9,13 @@ public class CompanyDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = -3629189250146111031L;
 	private GroupDTO context;
+	private int did;
+	private String name;
+	
+	public CompanyDTO(int did,   String name) {
+		this.did =did;
+		this.name = name;
+	}
 
 	public GroupDTO getContext() {
 		return context;
@@ -18,4 +25,5 @@ public class CompanyDTO implements Serializable{
 		this.context = context;
 	}
 
+	
 }

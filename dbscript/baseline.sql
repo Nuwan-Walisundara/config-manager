@@ -64,11 +64,11 @@ CREATE TABLE `cmxprofile` (
   `profiledid` int(11) NOT NULL AUTO_INCREMENT,
   `groupdid` int(11) NOT NULL ,
   `companydid` int(11) NOT NULL,
-  'id'varchar(100) NOT NULL,
-  'description' varchar(200) NOT NULL,
+  `id` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
   `isvalid` BIT(1) NOT NULL,
   `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT 'pkcmxprofile' PRIMARY KEY (`profiledid`), 
+  CONSTRAINT `pkcmxprofile` PRIMARY KEY (`profiledid`), 
   CONSTRAINT `fk01cmxprofile` FOREIGN KEY (`companydid`) REFERENCES `cmxcompany` (`companydid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk02cmxprofile` FOREIGN KEY (`groupdid`) REFERENCES `cmxgroup` (`groupdid`) ON DELETE NO ACTION ON UPDATE NO ACTION 
   
@@ -82,12 +82,12 @@ DROP TABLE IF EXISTS `cmxattribute`;
 CREATE TABLE `cmxattribute` (
   `attributedid` int(11) NOT NULL AUTO_INCREMENT,
   `companydid` int(11) NOT NULL,
-  'id'varchar(100) NOT NULL,
-  'description' varchar(200) NOT NULL,
+  `id` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
   `isvalid` BIT(1) NOT NULL,
   `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT 'pkcmxattribute' PRIMARY KEY (`attributedid`), 
-  CONSTRAINT `fk01cmxattribute` FOREIGN KEY (`companydid`) REFERENCES `cmxcompany` (`companydid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `pkcmxattribute` PRIMARY KEY (`attributedid`), 
+  CONSTRAINT `fk01cmxattribute` FOREIGN KEY (`companydid`) REFERENCES `cmxcompany` (`companydid`) ON DELETE NO ACTION ON UPDATE NO ACTION
   
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -101,10 +101,9 @@ CREATE TABLE `cmxattributedistribution` (
   `companydid` int(11) NOT NULL,
    `groupdid` int(11) NOT NULL,
    `attributedid` int(11) NOT NULL ,
-  
   `isvalid` BIT(1) NOT NULL,
   `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT 'pkcmxattributedistribution' PRIMARY KEY (`attributedid`), 
+  CONSTRAINT `pkcmxattributedistribution` PRIMARY KEY (`attributedistributiondid`), 
   CONSTRAINT `fk01cmxattributedistribution` FOREIGN KEY (`companydid`) REFERENCES `cmxcompany` (`companydid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk02cmxattributedistribution` FOREIGN KEY (`groupdid`) REFERENCES `cmxgroup` (`groupdid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk03cmxattributedistribution` FOREIGN KEY (`attributedid`) REFERENCES `cmxattribute` (`attributedid`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -119,10 +118,10 @@ DROP TABLE IF EXISTS `cmxattributevalue`;
 CREATE TABLE `cmxattributevalue` (
   `attributevaluedid` int(11) NOT NULL AUTO_INCREMENT,
   `attributedistributiondid` int(11) NOT NULL  ,
-  'attribVal' varchar(200) NOT NULL,
+  `attribVal` varchar(200) NOT NULL,
   `isvalid` BIT(1) NOT NULL,
   `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT 'pkcmxattributevalue' PRIMARY KEY (`attributedid`), 
+  CONSTRAINT `pkcmxattributevalue` PRIMARY KEY (`attributevaluedid`), 
   CONSTRAINT `fk01cmxattributevalue` FOREIGN KEY (`attributedistributiondid`) REFERENCES `cmxattributedistribution` (`attributedistributiondid`) ON DELETE NO ACTION ON UPDATE NO ACTION
   
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

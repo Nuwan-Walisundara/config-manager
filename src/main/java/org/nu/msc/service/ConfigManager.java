@@ -1,7 +1,11 @@
 package org.nu.msc.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -12,9 +16,12 @@ import org.nu.msc.dao.GroupDAO;
 import org.nu.msc.exception.ConfigException;
 import org.nu.msc.exception.ConfigException.Error;
 import org.nu.msc.model.AttribValueDTO;
+import org.nu.msc.model.AttributeDTO;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.EnvDTO;
 import org.nu.msc.model.GroupDTO;
+
+import com.mysql.cj.api.x.Collection;
 
 public class ConfigManager {
 	
@@ -58,12 +65,47 @@ public class ConfigManager {
 		
 		
 		
-		CompanyDTO company = dao.createIfAbsent(id);
+	/*	CompanyDTO company = dao.createIfAbsent(id);
 		 
 		GroupDTO groupDTO = groupDAO.createIfAbsent(company,contextID);
 		
 		EnvDTO envDTO = envDAO.createIfAbsent(company,groupDTO,envID);
-		attribDAO.createIfAbsent(company,groupDTO,envDTO);
+		attribDAO.createIfAbsent(company,groupDTO,envDTO,paramMap);*/
+		
+		
+	}
+	
+	public void createIfAbsent(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
+
+		CompanyDTO company =dao. load(id);
+		if (company == null) {
+			Integer did = dao.create(id);
+			company = new CompanyDTO(did, id);
+		}
+
+		GroupDTO groupDTO = groupDAO.load(company, contextID);
+		if (groupDTO == null) {
+			int groupDid = groupDAO.create(company, contextID);
+			groupDTO = new GroupDTO(company.getCompanyDid(), contextID, groupDid);
+		}
+		
+
+		EnvDTO eventDTO= envDAO.load(company,groupDTO,envID);
+		if(eventDTO==null){
+			
+			int profiledid = envDAO.create(company,groupDTO,envID);
+			eventDTO = new EnvDTO(profiledid, groupDTO.getGroupDid(), company.getCompanyDid(), envID);
+		}
+		
+		List<AttributeDTO> attributeList = attribDAO.loadAttribute(company);
+		Map<String,AttributeDTO > result2=attributeList.stream().collect(Collectors.toMap(x->x.getId(),x->x));
+		List<String> newAttribs =new ArrayList<String>();
+		paramMap.forEach((k,v)->{
+								if(!result2.containsKey(k)){
+									newAttribs.add(k);
+								}
+								} );
+		attribDAO.createAttributes(company, newAttribs);
 		
 		
 	}

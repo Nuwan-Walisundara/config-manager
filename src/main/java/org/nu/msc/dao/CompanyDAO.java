@@ -35,13 +35,5 @@ public class CompanyDAO {
 
 	}
 
-	public CompanyDTO createIfAbsent(String id) {
-		CompanyDTO company = load(id);
-		if (company == null) {
-			Integer did = create(id);
-			company = new CompanyDTO(did, id);
-		}
-		return company;
-	}
 
 }

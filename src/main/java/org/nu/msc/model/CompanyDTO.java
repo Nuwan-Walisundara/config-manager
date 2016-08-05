@@ -2,6 +2,8 @@ package org.nu.msc.model;
 
 import java.io.Serializable;
 
+import org.skife.jdbi.v2.tweak.Argument;
+
 public class CompanyDTO implements Serializable{
 	
 	/**
@@ -11,6 +13,7 @@ public class CompanyDTO implements Serializable{
 	private GroupDTO context;
 	private int did;
 	private String name;
+	private int compDid;
 	
 	public CompanyDTO(int did,   String name) {
 		this.did =did;
@@ -23,6 +26,12 @@ public class CompanyDTO implements Serializable{
 
 	public void setContext(GroupDTO context) {
 		this.context = context;
+	}
+
+
+	public int getCompanyDid() {
+		// TODO Auto-generated method stub
+		return compDid;
 	}
 
 	

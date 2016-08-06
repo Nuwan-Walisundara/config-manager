@@ -1,5 +1,6 @@
 package org.nu.msc.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,10 +21,13 @@ import org.nu.msc.model.AttributeDTO;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.EnvDTO;
 import org.nu.msc.model.GroupDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.api.x.Collection;
 
 public class ConfigManager {
+	Logger log = LoggerFactory.getLogger(ConfigManager.class);
 	
 	private CompanyDAO dao = new CompanyDAO();
 	private GroupDAO groupDAO = new GroupDAO();
@@ -75,7 +79,7 @@ public class ConfigManager {
 		
 	}
 	
-	public void createIfAbsent(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
+	/*public void createIfAbsent(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
 
 		CompanyDTO company =dao. load(id);
 		if (company == null) {
@@ -108,7 +112,7 @@ public class ConfigManager {
 		attribDAO.createAttributes(company, newAttribs);
 		
 		
-	}
+	}*/
 
 	public void update(String id, String contextID, String envID, MultivaluedMap<String, String> paramMap)throws ConfigException {
 		CompanyDTO company =	dao.load(id);
@@ -159,6 +163,33 @@ public class ConfigManager {
 		}
 		
 		envDAO.delete(company,groupDTO,envDTO);
+	}
+
+	public void create(String id, String contextID, List<String> paramMap) throws ConfigException{
+
+		CompanyDTO company =dao. load(id);
+		if (company == null) {
+			Integer did = dao.create(id);
+			company = new CompanyDTO(did, id);
+		}
+ 
+		GroupDTO groupDTO = groupDAO.load(company, contextID);		//load Group
+		if (groupDTO == null) { //create if does not exists
+			int groupDid = groupDAO.create(company, contextID);
+			groupDTO = new GroupDTO(company.getCompanyDid(), contextID, groupDid);
+		}
+		
+
+		
+		try {
+			attribDAO.deleteAttributes(company);
+		} catch (SQLException e) {
+			log.error("",e);
+			throw new ConfigException(Error.INTERNAL_SERVER_ERROR);
+		}//delete attributes if exists
+		attribDAO.createAttributes(company,groupDTO, paramMap); //Create attributes given
+		
+		
 	}
 
 }

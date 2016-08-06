@@ -2,7 +2,8 @@ package org.nu.msc.model;
 
 import java.io.Serializable;
 
-import org.skife.jdbi.v2.tweak.Argument;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class CompanyDTO implements Serializable{
 	
@@ -10,13 +11,17 @@ public class CompanyDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -3629189250146111031L;
-	private GroupDTO context;
-	private int did;
+	@Expose
+	@SerializedName("ID") 
 	private String name;
+	
+	@Expose
+	@SerializedName("Context") 
+	private GroupDTO context;
 	private int compDid;
 	
 	public CompanyDTO(int did,   String name) {
-		this.did =did;
+		this.compDid =did;
 		this.name = name;
 	}
 

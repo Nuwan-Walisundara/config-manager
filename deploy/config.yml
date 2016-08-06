@@ -1,8 +1,8 @@
-#database:
-#driverClass: com.mysql.cj.jdbc.Driver
-#  user: root
-#  password: root
-#  url: jdbc:mysql://127.0.0.1/token_service?useSSL=false
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  user: root
+  password: root
+  url: jdbc:mysql://127.0.0.1/config_service?useSSL=false
 server:
         applicationConnectors:
           - type: http

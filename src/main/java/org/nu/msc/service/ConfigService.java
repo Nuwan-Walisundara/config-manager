@@ -1,15 +1,20 @@
 package org.nu.msc.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -19,6 +24,10 @@ import org.nu.msc.model.CompanyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -38,7 +47,13 @@ public class ConfigService {
 			@ApiParam(value = "enviormtn to fetch", required = true) @PathParam("envID") String envID)  {
 			try {
 				CompanyDTO cmpDTO=	new ConfigManager().loadConfig ( id, contextID,envID);
-				return Response.status(Response.Status.OK).entity(cmpDTO).build();
+				Gson gson = new GsonBuilder()
+		                .excludeFieldsWithoutExposeAnnotation()
+		                .create();
+				JsonElement je = gson.toJsonTree(cmpDTO);
+				 JsonObject jo = new JsonObject();
+				 jo.add("Company", je);
+				return Response.status(Response.Status.OK).entity(jo.toString()).build();
 			} catch (ConfigException e) {
 				return Response.status(Response.Status.BAD_REQUEST)
 						.entity(e.getError()).build();
@@ -48,12 +63,13 @@ public class ConfigService {
 	
 	@POST
 	@Path("/{ownerID}/{contextID}/{envID}")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "create new values for configurations", notes = "API for return the contact by given the id", response = Response.class)
 	public Response create(	@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id,
 			@ApiParam(value = "Context to fetch", required = true) @PathParam("contextID") String contextID,
 			@ApiParam(value = "enviormtn to fetch", required = true) @PathParam("envID") String envID,
-			@ApiParam(value = "owner Id of token to fetch", required = true) MultivaluedMap<String, String> paramMap){
+			@ApiParam(value = "owner Id of token to fetch", required = true)  MultivaluedMap<String, String> paramMap){
 		Map<String,String> valueMap =new HashMap<String,String>();
 		paramMap.putAll(paramMap);
 		try {
@@ -66,7 +82,29 @@ public class ConfigService {
 		}
 	}
 	
-	@PUT
+	
+	@POST
+	@Path("/{ownerID}/{contextID}")
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+	@ApiOperation(value = "create new values for configurations", notes = "API for return the contact by given the id", response = Response.class)
+	public Response create(	@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id,
+			@ApiParam(value = "Context to fetch", required = true) @PathParam("contextID") String contextID,
+			@ApiParam(value = "List of Attributes to fesh", required = true)   MultivaluedMap<String, String> paramMap){
+		try {
+			
+			/*Gson gs = new Gson();
+		    String [] n = gs.fromJson(paramMap, String [].class);
+*/
+			new ConfigManager().create ( id, contextID, new ArrayList<String>());
+			return Response.status(Response.Status.OK).entity("Successfuly created").build();
+			
+		} catch (ConfigException e) {
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(e.getError()).build();
+		}
+	}
+	
+/*	@PUT
 	@Path("/{ownerID}/{contextID}/{envID}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Update existing configurations for given parameters", notes = "API for return the contact by given the id", response = Response.class)
@@ -81,7 +119,7 @@ public class ConfigService {
 			return Response.status(Response.Status.BAD_REQUEST)
 					.entity(e.getError()).build();
 		}
-	}
+	}*/
 	
 	@DELETE
 	@Path("/{ownerID}/{contextID}")
@@ -113,5 +151,10 @@ public class ConfigService {
 			return Response.status(Response.Status.BAD_REQUEST)
 					.entity(e.getError()).build();
 		}
+	}
+	
+	class Test{
+		private String name;
+		
 	}
 }

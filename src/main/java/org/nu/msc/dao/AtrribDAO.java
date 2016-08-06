@@ -2,60 +2,36 @@ package org.nu.msc.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.junit.Assert;
 import org.nu.msc.model.AttribValueDTO;
 import org.nu.msc.model.AttributeDTO;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.EnvDTO;
 import org.nu.msc.model.GroupDTO;
-import org.skife.jdbi.v2.Batch;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
-import org.skife.jdbi.v2.sqlobject.SqlBatch;
-import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import org.skife.jdbi.v2.util.IntegerMapper;
 
 
 public class AtrribDAO {
 	
 	
-	interface AttributeCreatable {
-		 @SqlBatch("INSERT INTO cmxattribute(companydid, id )  values( :companydid,:id )")
-		 @BatchChunkSize(10)
-		 @GetGeneratedKeys
-		 public Integer createAttribute(@Bind("companydid") Integer companydid ,@Bind("id") String id );
-
-	}
-	
 	public void createIfAbsent(CompanyDTO company, GroupDTO groupDTO, EnvDTO envDTO, Map<String, String> paramMap) {
 		// TODO Auto-generated method stub
 		
 	}
-	public List<Integer> createAttributes(CompanyDTO company, List <String> newAttributes) {
+	public void createAttributes(CompanyDTO companyDTO,GroupDTO groupDTO, List <String> newAttributes) {
+//		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
 		DBI dbi = JDBIUtil.getInstance();
-		Handle h = dbi.open();
-		AttributeCreatable attribCreator =h.attach(AttributeCreatable.class);
-		List<Integer> attributeDids = new ArrayList<Integer>();
-		newAttributes.forEach((k)->{
-			Integer attributeDid = attribCreator.createAttribute(company.getCompanyDid(), k);
-			attributeDids.add(attributeDid);
-			
-		} );
+		AttributeHandler attribHandler = dbi.onDemand(AttributeHandler.class);
 		
-		Assert.assertNotNull(attributeDids);
-		return attributeDids;
-
+		attribHandler.createAttributes(companyDTO, groupDTO, newAttributes);
+		
 	}
 	public void update(CompanyDTO company, GroupDTO groupDTO, EnvDTO envDTO, MultivaluedMap<String, String> paramMap) {
 		// TODO Auto-generated method stub
@@ -68,8 +44,8 @@ public class AtrribDAO {
 		sql.append("SELECT atrib.id ,atv.attribVal");
 		sql.append(" FROM  ");
 		sql.append(" cmxattributedistribution atribDis,");
-		sql.append(" cmxattribute atrib ");
-		sql.append(" cmxattributevalue atv,");
+		sql.append(" cmxattribute atrib, ");
+		sql.append(" cmxattributevalue atv ");
 		
 		sql.append(" WHERE ");
 		sql.append(" atribDis.attributedistributiondid = atv.attributedistributiondid");
@@ -126,6 +102,13 @@ public class AtrribDAO {
 		return returnList;
 	}
 	
-
+	public void deleteAttributes(CompanyDTO companyDTO) throws SQLException {
+//		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
+		DBI dbi = JDBIUtil.getInstance();
+		AttributeHandler attribHandler = dbi.onDemand(AttributeHandler.class);
+		
+		attribHandler.deleteAttributes(companyDTO);
+		
+	}
 	 
 }

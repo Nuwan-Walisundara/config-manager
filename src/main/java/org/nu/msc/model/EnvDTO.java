@@ -4,12 +4,18 @@ import java.util.List;
 
 import org.skife.jdbi.v2.tweak.Argument;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class EnvDTO {
 	private int profiledid;
 	private int groupdid;
 	private int companydid;
+	@Expose
 	private String id;
-	
+	@Expose
+	@SerializedName("attributes") 
+	private List<AttribValueDTO> attributes;
 	public EnvDTO(int profiledid, int groupdid, int companydid, String id) {
 		this.profiledid= profiledid;
 		this.groupdid = groupdid;
@@ -18,7 +24,7 @@ public class EnvDTO {
 	}
 
 	public void setAttribValues(List<AttribValueDTO> attribValueDTOs) {
-		// TODO Auto-generated method stub
+		this.attributes =attribValueDTOs;
 		
 	}
 

@@ -1,10 +1,18 @@
 package org.nu.msc.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class GroupDTO {
 
 	private int groupDid;
 	private int companydid;
+
+    @Expose
+    @SerializedName("ID") 
 	private String id;
+    @Expose
+    @SerializedName("Enviroment") 
 	private EnvDTO envDTO;
 	
 	

@@ -3,7 +3,6 @@ package org.nu.msc.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.junit.Assert;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.EnvDTO;
 import org.nu.msc.model.GroupDTO;
@@ -27,7 +26,6 @@ public class EnvDAO {
 				.bind("id", envID)
 				.executeAndReturnGeneratedKeys(IntegerMapper.FIRST).first();
 
-		Assert.assertNotNull(companyDid);
 		return companyDid;
 
 	}

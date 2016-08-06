@@ -3,7 +3,6 @@ package org.nu.msc.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.junit.Assert;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.GroupDTO;
 import org.skife.jdbi.v2.DBI;
@@ -17,7 +16,7 @@ public class GroupDAO {
 	public GroupDTO load(CompanyDTO company, String contextID) {
 		DBI dbi = JDBIUtil.getInstance();
 		return dbi.open()
-				.createQuery("SELECT companydid,id,groupdid FROM cmxgroup WHERE companydid=:companydid and name=:id")
+				.createQuery("SELECT companydid,id,groupdid FROM cmxgroup WHERE companydid=:companydid and id=:id")
 				.bind("id", contextID).bind("companydid", company.getCompanyDid()).map(new ResultSetMapper<GroupDTO>() {
 
 					@Override
@@ -36,7 +35,6 @@ public class GroupDAO {
 				.bind("companydid", company.getCompanyDid()).bind("id", contextID).bind("description", contextID)
 				.executeAndReturnGeneratedKeys(IntegerMapper.FIRST).first();
 
-		Assert.assertNotNull(companyDid);
 		return companyDid;
 
 	}

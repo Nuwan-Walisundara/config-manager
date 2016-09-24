@@ -1,22 +1,17 @@
 package org.nu.msc.service;
 
-import java.util.ArrayList;
+import java.io.StringReader;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.nu.msc.exception.ConfigException;
@@ -28,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -61,7 +57,7 @@ public class ConfigService {
 
 	}
 	
-	@POST
+/*	@POST
 	@Path("/{ownerID}/{contextID}/{envID}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -80,22 +76,22 @@ public class ConfigService {
 			return Response.status(Response.Status.BAD_REQUEST)
 					.entity(e.getError()).build();
 		}
-	}
+	}*/
 	
 	
 	@POST
 	@Path("/{ownerID}/{contextID}")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+//	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "create new values for configurations", notes = "API for return the contact by given the id", response = Response.class)
 	public Response create(	@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id,
 			@ApiParam(value = "Context to fetch", required = true) @PathParam("contextID") String contextID,
-			@ApiParam(value = "List of Attributes to fesh", required = true)   MultivaluedMap<String, String> paramMap){
+			@ApiParam(value = "List of Attributes to fesh", required = true)  String jsonBody){
 		try {
-			
-			/*Gson gs = new Gson();
-		    String [] n = gs.fromJson(paramMap, String [].class);
-*/
-			new ConfigManager().create ( id, contextID, new ArrayList<String>());
+			 Gson gs = new Gson();
+//			 paramMap.containsKey("callbackUrl");
+			 CreateWrapperDTO paramMap = gs.fromJson(jsonBody, CreateWrapperDTO.class);
+			new ConfigManager().create ( id, contextID, paramMap.getAttributes(),paramMap.getEnviorments());
 			return Response.status(Response.Status.OK).entity("Successfuly created").build();
 			
 		} catch (ConfigException e) {
@@ -153,8 +149,48 @@ public class ConfigService {
 		}
 	}
 	
-	class Test{
+	class CreateWrapperDTO{
+		private AttributeDTO[] attributes;
+
+		private   AttributeDTO[] enviorments;
+
+		public Map<String,String> getAttributes() {
+			return Arrays .asList(attributes ).stream()
+							.collect(Collectors.toMap(AttributeDTO::getName, AttributeDTO::getDescription)) ;
+		}
+
+		public void setAttributes(AttributeDTO[] attributes) {
+			this.attributes = attributes;
+		}
+
+		public  Map<String,String> getEnviorments() {
+			return Arrays .asList(enviorments ).stream().collect(Collectors.toMap(AttributeDTO::getName, AttributeDTO::getDescription));
+		}
+
+		public void setEnviorments(AttributeDTO[] enviorments) {
+			this.enviorments = enviorments;
+		}
+		
+		 
+		}
+	
+	class AttributeDTO{
 		private String name;
+		private String description;
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
+		 
 		
 	}
 }

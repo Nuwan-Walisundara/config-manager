@@ -1,12 +1,10 @@
 package org.nu.msc.service;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -17,14 +15,11 @@ import org.nu.msc.dao.GroupDAO;
 import org.nu.msc.exception.ConfigException;
 import org.nu.msc.exception.ConfigException.Error;
 import org.nu.msc.model.AttribValueDTO;
-import org.nu.msc.model.AttributeDTO;
 import org.nu.msc.model.CompanyDTO;
 import org.nu.msc.model.EnvDTO;
 import org.nu.msc.model.GroupDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mysql.cj.api.x.Collection;
 
 public class ConfigManager {
 	Logger log = LoggerFactory.getLogger(ConfigManager.class);
@@ -65,7 +60,7 @@ public class ConfigManager {
 		
 	}
 
-	public void create(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
+//	public void create(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
 		
 		
 		
@@ -77,7 +72,7 @@ public class ConfigManager {
 		attribDAO.createIfAbsent(company,groupDTO,envDTO,paramMap);*/
 		
 		
-	}
+//	}
 	
 	/*public void createIfAbsent(String id, String contextID, String envID,  Map<String, String> paramMap)throws ConfigException {
 
@@ -165,7 +160,7 @@ public class ConfigManager {
 		envDAO.delete(company,groupDTO,envDTO);
 	}
 
-	public void create(String id, String contextID, List<String> paramMap) throws ConfigException{
+	public void create(String id, String contextID, Map<String,String> attributes,Map<String,String> envrioments) throws ConfigException{
 
 		CompanyDTO company =dao. load(id);
 		if (company == null) {
@@ -178,8 +173,8 @@ public class ConfigManager {
 			int groupDid = groupDAO.create(company, contextID);
 			groupDTO = new GroupDTO(company.getCompanyDid(), contextID, groupDid);
 		}
-		
-
+		 
+		envDAO.createAll(company, groupDTO, envrioments);
 		
 		try {
 			attribDAO.deleteAttributes(company);
@@ -187,7 +182,7 @@ public class ConfigManager {
 			log.error("",e);
 			throw new ConfigException(Error.INTERNAL_SERVER_ERROR);
 		}//delete attributes if exists
-		attribDAO.createAttributes(company,groupDTO, paramMap); //Create attributes given
+		attribDAO.createAttributes(company,groupDTO, attributes); //Create attributes given
 		
 		
 	}

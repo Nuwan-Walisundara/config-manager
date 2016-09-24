@@ -25,7 +25,7 @@ public class AtrribDAO {
 		// TODO Auto-generated method stub
 		
 	}
-	public void createAttributes(CompanyDTO companyDTO,GroupDTO groupDTO, List <String> newAttributes) {
+	public void createAttributes(CompanyDTO companyDTO,GroupDTO groupDTO, Map<String, String> newAttributes) {
 //		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
 		DBI dbi = JDBIUtil.getInstance();
 		AttributeHandler attribHandler = dbi.onDemand(AttributeHandler.class);
